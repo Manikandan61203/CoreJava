@@ -12,5 +12,6 @@ public class BitwiseOperator {
         int n2=o.nextInt();
         int xor=n1^n2;
         System.out.println("Xor Operation:"+xor);
+        System.out.println("hari");
     }
 }
