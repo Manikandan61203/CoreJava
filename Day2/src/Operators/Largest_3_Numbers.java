@@ -1,6 +1,6 @@
 package Operators;
 import java.util.Scanner;
-public class Largest3Numbers {
+public class Largest_3_Numbers {
     public static void main(String args[])
     {
         Scanner o=new Scanner(System.in);
