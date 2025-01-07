@@ -16,7 +16,7 @@ class Cat extends Animal
         System.out.println("Cat Meows");
     }
 }
-public class Animalsound {
+public class AnimalSound {
     public static void main(String args[])
     {
         Dog dog=new Dog();
