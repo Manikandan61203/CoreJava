@@ -1,7 +1,7 @@
 package Java_Import_And_Packages;
 import java.util.Scanner;
 import  Java_Import_And_Packages.Shapes.*;
-public class AreaofShapes {
+public class AreaOfShapes {
     public static void main(String[] args) {
         Scanner o=new Scanner(System.in);
         Circle cir=new Circle();
