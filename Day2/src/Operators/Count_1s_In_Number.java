@@ -1,6 +1,6 @@
 package Operators;
 import java.util.Scanner;
-public class Count1sinNumber {
+public class Count_1s_In_Number {
     public static void main(String args[])
     {
         Scanner o=new Scanner(System.in);
