@@ -1,6 +1,6 @@
 package Arrays;
 import java.util.Scanner;
-public class SumofArray {
+public class SumOfArray {
     public static void main(String args[]) {
         Scanner o = new Scanner(System.in);
         int n = o.nextInt();
