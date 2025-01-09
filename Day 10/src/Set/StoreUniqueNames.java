@@ -1,5 +1,4 @@
 package Set;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -11,7 +10,12 @@ public class StoreUniqueNames {
         Set<String> sun=new LinkedHashSet<>();
         for (int i=0;i<s.length;i++)
         {
-            sun.add(s[i]);
+            if(sun.add(s[i])){
+                System.out.println("Added: "+s[i]);
+            }
+            else{
+                System.out.println("Name is already Present(Duplicate): "+s[i]);
+            }
         }
         System.out.println("Unique Names: "+sun);
     }
