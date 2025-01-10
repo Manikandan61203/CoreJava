@@ -13,7 +13,7 @@ public class EmailValidation {
         System.out.println("Enter Emails to Validate seperated by (,):");
         String s[]=o.nextLine().split(",");
         List<String> l=new ArrayList<>(Arrays.asList(s));
-        String re="^[a-zA-Z0-9]([a-zA-Z0-9.-_])+\\.(com|org|net)$";
+        String re="^[a-zA-Z0-9]([a-zA-Z0-9.-_])*@[a-zA-Z0-9.-_]+\\.(com|org|net)$";
         Pattern p=Pattern.compile(re);
         for(String i:l) {
             Matcher m = p.matcher(i);
