@@ -21,8 +21,7 @@ public class OnlineVotingSystem {
             exe.shutdownNow();}
         }
         catch (InterruptedException e){
-            exe.shutdownNow();
-            Thread.currentThread().interrupt();
+            e.printStackTrace();
         }
         display();
     }
