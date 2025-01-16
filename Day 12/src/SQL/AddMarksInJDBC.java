@@ -3,7 +3,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Scanner;
 public class AddMarksInJDBC {
     public static void main(String[] args) {
         Scanner o=new Scanner(System.in);
@@ -34,15 +33,19 @@ public class AddMarksInJDBC {
         }catch (Exception e){
             e.printStackTrace();
         }
-        try{
-            if(con!=null)
-                con.close();
-            if(st!=null)
-                st.close();
-            if(rs!=null)
-                rs.close();
-        }catch (Exception e){
-            e.printStackTrace();
+        finally
+        {
+            try {
+                if (con != null)
+                    con.close();
+                if (st != null)
+                    st.close();
+                if (rs != null)
+                    rs.close();
+            } 
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
