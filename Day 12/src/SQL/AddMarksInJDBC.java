@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 public class AddMarksInJDBC {
     public static void main(String[] args) {
-        Scanner o=new Scanner(System.in);
         Connection con=null;
         Statement st=null;
         ResultSet rs=null;
