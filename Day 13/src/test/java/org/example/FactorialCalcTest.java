@@ -16,17 +16,11 @@ public class FactorialCalcTest {
         long r=fc.Calc(5);
         Assert.assertEquals(120,r);
     }
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void NegativeNumber()
     {
-        assertThrows(IllegalArgumentException.class, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                FactorialCalc.Calc(-1);
-            }
-        });
+        FactorialCalc fc=new FactorialCalc();
+        long r=fc.Calc(-5);
+        Assert.assertEquals("Negative Numbers are Not Allowed",r);
     }
-    private void assertThrows(Class<IllegalArgumentException> illegalArgumentExceptionClass, Runnable runnable) {}
 }
