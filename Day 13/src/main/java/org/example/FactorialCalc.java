@@ -3,8 +3,7 @@ public class FactorialCalc {
     public static long Calc(int n)
     {
         if(n<0) {
-            System.out.println("Negative Numbers not Allowed!");
-            return 0;
+            throw new IllegalArgumentException("Negative Numbers are Not Allowed");
         }
         long r=1;
         for(int i=n;i>=1;i--) {
