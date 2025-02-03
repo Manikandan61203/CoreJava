@@ -10,12 +10,39 @@ import java.util.stream.Collectors;
 public class AccessData {
 
     static Scanner o=new Scanner(System.in);
-    HashMap<Integer,Student> s=new HashMap<>();
+    TreeMap<Integer,Student> s=new TreeMap<>();
     static File file=new File("StudentData.JSON");
     static ObjectMapper om=new ObjectMapper();
+    private final Deque<TreeMap<Integer,Student>> undo = new ArrayDeque<>();
 
     public AccessData() {
         retriveJson();
+    }
+
+    private TreeMap<Integer, Student> deepCopy(TreeMap<Integer, Student> og) {
+        TreeMap<Integer, Student> copy = new TreeMap<>();
+        for (Map.Entry<Integer, Student> entry : og.entrySet()) {
+            Student orstd = entry.getValue();
+            Student studentCopy = new Student(
+                    orstd.getId(),
+                    orstd.getName(),
+                    orstd.getAge(),
+                    orstd.getGrade(),
+                    orstd.getEmail()
+            );
+            copy.put(entry.getKey(), studentCopy);
+        }
+        return copy;
+    }
+
+    public void UndoOperation(){
+        if(!undo.isEmpty()){
+            s=undo.pop();
+            System.out.println("Undo Successful! Reverted to the previous state.");
+            SaveJson();
+        } else {
+            System.out.println("No previous operations to undo.");
+        }
     }
 
     public void SaveJson(){
@@ -36,7 +63,7 @@ public class AccessData {
         }
         new Thread(()->{
             try {
-                s=om.readValue(file, new TypeReference<HashMap<Integer, Student>>() {});
+                s=om.readValue(file, new TypeReference<TreeMap<Integer, Student>>() {});
             } catch (IOException e) {
                 System.err.println("Error Saving Data: "+e.getMessage());
             }
@@ -48,6 +75,15 @@ public class AccessData {
         Pattern p=Pattern.compile(re);
         Matcher m=p.matcher(email);
         return m.matches();
+    }
+
+    public boolean getUserConfirmation(String message) {
+        while (true) {
+            String confirm = getValidString(message + " (Y/N)").toUpperCase();
+            if (confirm.equals("Y")) return true;
+            if (confirm.equals("N")) return false;
+            System.out.println("Invalid input! Please enter 'Y' or 'N'.");
+        }
     }
 
     public int getValidInt(String msg) {
@@ -78,15 +114,16 @@ public class AccessData {
     }
 
     public void CreateStudent(){
+        if(!getUserConfirmation("Are You Sure! You Want to Create New Student?")) return;
         System.out.println("---- Enter Student Details ----");
         int id = getValidInt("Enter Student Id :");
         if (s.containsKey(id)) {
             System.out.println("Error: Student ID already exists.");
             return;
         }
-        String name = getValidString("Enter the Name :");
+        String name = getValidString("Enter the Name :").toUpperCase();
         int age = getValidInt("Enter the Age :");
-        String grade = getValidString("Enter the Grade :");
+        String grade = getValidString("Enter the Grade :").toUpperCase();
         String email;
         while(true){
             email = getValidString("Enter the Email :");
@@ -94,10 +131,12 @@ public class AccessData {
                 break;
             System.out.println("Invalid Email! Please Enter a Valid Email :");
         }
+        undo.push(deepCopy(s));
         s.put(id, new Student(id, name, age, grade, email));
         System.out.println("New Student Added Successfully");
         SaveJson();
     }
+
     public void AllStudents(){
         if(s.isEmpty()){
             System.out.println("No Students Available.");
@@ -106,23 +145,72 @@ public class AccessData {
         System.out.println("----- Student Details -----");
         s.values().stream().sorted(Comparator.comparingInt(Student::getId)).forEach(System.out::println);
     }
-    public void SearchStudent(){
-        int sid;
-        boolean b=true;
-        while (b) {
-            sid = getValidInt("Enter Student Id :");
-            System.out.println("Search Result:");
-            Optional<Student> sopt = Optional.ofNullable(s.get(sid));
-            if(sopt.isPresent()){
-                System.out.print("Student Details :");
-                System.out.println(sopt.get());
+
+    public void SearchStudent() {
+        while (true) {
+            System.out.println("\n---- Search Options ----");
+            System.out.println("1. ID                     |");
+            System.out.println("2. Name                   |");
+            System.out.println("3. Email                  |");
+            System.out.println("4. Exit                   |");
+            int sop = getValidInt("Enter your Choice :");
+            switch (sop) {
+                case 1 -> SearchById();
+                case 2 -> SearchByName();
+                case 3 -> SearchByEmail();
+                case 4 -> {
+                    System.out.println("Exiting From Search");
+                    return;
+                }
+                default -> System.out.println("Invalid choice! Please try again.");
+            }
+        }
+    }
+
+    public void SearchById(){
+        while (true) {
+            int sid = getValidInt("Enter Student ID :");
+            System.out.println("Search Result :");
+            Optional<Student> sbop = Optional.ofNullable(s.get(sid));
+            if (sbop.isPresent()) {
+                System.out.println(sbop.get());
                 break;
-            }else{
+            } else {
                 System.out.println("Student Id is Invalid! No student found with ID: " + sid);
             }
         }
     }
+
+    public void SearchByName(){
+        while (true) {
+            String Sname = getValidString("Enter Student Name :").toUpperCase();
+            System.out.println("Search Result :");
+            List<Student> res = s.values().stream()
+                    .filter(student -> student.getName().equalsIgnoreCase(Sname))
+                    .collect(Collectors.toList());
+            if (!res.isEmpty()) {
+                res.forEach(System.out::println);
+                break;
+            } else System.out.println("Student Name is Invalid!");
+        }
+    }
+
+    public void SearchByEmail(){
+        while (true) {
+            String Semail = getValidString("Enter Student Email :");
+            System.out.println("Search Result :");
+            List<Student> res = s.values().stream()
+                    .filter(student -> student.getEmail().equalsIgnoreCase(Semail))
+                    .collect(Collectors.toList());
+            if (!res.isEmpty()) {
+                res.forEach(System.out::println);
+                break;
+            } else System.out.println("Student Email is Invalid!");
+        }
+    }
+
     public void UpdateStudent(){
+        if(!getUserConfirmation("Are You Sure! You Want to Update Student?")) return;
         int uid;
         while(true)
         {
@@ -134,6 +222,7 @@ public class AccessData {
                 uid=o.nextInt();
             }
         }
+        undo.push(deepCopy(s));
         while(true)
         {
             System.out.println("\n---- Update Options ----");
@@ -145,13 +234,13 @@ public class AccessData {
             int uop=getValidInt("Enter the Option :");
             switch (uop)
             {
-                case 1->{s.get(uid).setName(getValidString("Enter the Name to Update :"));
+                case 1->{s.get(uid).setName(getValidString("Enter the Name to Update :").toUpperCase());
                     System.out.println("Student Name Updated Successfully");
                 }
                 case 2->{s.get(uid).setAge(getValidInt("Enter the Age to Update :"));
                     System.out.println("Student Age Updated Successfully");
                 }
-                case 3->{s.get(uid).setGrade(getValidString("Enter the Grade to Update :"));
+                case 3->{s.get(uid).setGrade(getValidString("Enter the Grade to Update :").toUpperCase());
                     System.out.println("Student Grade Updated Successfully");
                 }
                 case 4-> {
@@ -176,9 +265,12 @@ public class AccessData {
             SaveJson();
         }
     }
+
     public void DeleteStudent(){
+        if(!getUserConfirmation("Are You Sure! You Want to Delete Student Record?")) return;
         int did=getValidInt("Enter Student Id To Delete :");
         if(s.containsKey(did)) {
+            undo.push(deepCopy(s));
             s.remove(did);
             System.out.println("Student Removed Successfully");
             SaveJson();
@@ -186,6 +278,7 @@ public class AccessData {
             System.out.println("Error: Student ID not found.");
         }
     }
+
     public void filterStudentByGrade(){
         String fgrade=getValidString("Enter Grade to Filter :");
         List<Student> fs=s.values().stream()
@@ -197,6 +290,7 @@ public class AccessData {
         int n1[]={1};
         fs.forEach(student -> System.out.println("Student "+(n1[0]++)+student));
     }
+
     public void sortStudent(){
         while (true) {
             System.out.println("\n---- Filter Options ----");
