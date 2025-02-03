@@ -14,7 +14,8 @@ public class StudentManagementSystem {
             System.out.println("5. Delete Student Record           |");
             System.out.println("6. Filter Students by Grade        |");
             System.out.println("7. Sort Students by Name or Age    |");
-            System.out.println("8. Exit                            |");
+            System.out.println("8. Undo Operation                  |");
+            System.out.println("9. Exit                            |");
             int op= ad.getValidInt("Enter Operation :");
             switch (op){
                 case 1-> ad.CreateStudent();
@@ -24,7 +25,8 @@ public class StudentManagementSystem {
                 case 5-> ad.DeleteStudent();
                 case 6-> ad.filterStudentByGrade();
                 case 7-> ad.sortStudent();
-                case 8-> {
+                case 8-> ad.UndoOperation();
+                case 9-> {
                     b=false;
                     System.out.println("Exiting Student Management System. Goodbye!");
                     o.close();
