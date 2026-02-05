@@ -13,7 +13,7 @@ public class PrimitiveTypes {
         int doubleint_2=(int)double_1;//Explicit Type Casting
         System.out.println("Byte:"+byte_1);
         System.out.println("Short:"+short_1);
-        System.out.println("Int:  "+int_1);
+        System.out.println("Int:"+int_1);
         System.out.println("Long:"+long_1);
         System.out.println("Char:"+char_1);
         System.out.println("Float:"+float_1);
